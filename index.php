@@ -2,6 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>        
     	<title>ServerZilla</title>
+    	<!--
+    		Coded By Ajith Kp (fb.com/ajithkp560) and Arjun Ny (fb.com/arjun.knr.5).
+    		BCA Final Year Project 2015.
+    		(C) ServerZilla (c)
+    	-->
     	<link href="img/icon.gif" rel="icon" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charset="utf-8" />
