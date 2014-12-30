@@ -37,13 +37,19 @@
 		$password = $_POST['password'];
 		$rem = $_POST['remember'];
 		$query = mysql_query("SELECT passwd FROM ftp_user WHERE usrname='".mysql_real_escape_string(trim($usrname))."'");
+		$flg = FALSE;
 		while($row=mysql_fetch_array($query))
 		{
 			if($row['passwd']==md5($password))
 			{
 				set_cookies($usrname, md5($password), $rem);
+				$flg = TRUE;
 				//print'<script>document.cookie="usr='.$usrname.';";document.cookie="pass='.md5($password).';";document.location="index.php";</script>';
 			}
+		}
+		if(!$flg)
+		{
+			header("Location: login.php");
 		}
 	}
 	else {
