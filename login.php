@@ -1,5 +1,20 @@
  <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<title>ServerZilla Admin Login</title>
+    	<link href="img/icon.gif" rel="icon" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="utf-8" />
+        
+        <script src="js/jquery-1.11.1.min.js"></script>
+        <script src="js/misc.js"></script>
+        <script src="js/jquery.confirm.min.js"></script>
+        <script src="js/bootbox.min.js"></script>
+        
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" href="css/misc.css" />
+      
 	<?php
 	
 	@error_reporting(100000);
@@ -25,7 +40,7 @@
 		header("Location: install.php");
 	}
 	$conn = mysql_connect($dbHost, $dbUsr, $dbPass);
-	$sel = mysql_select_db("ftp_db", $conn);
+	$sel = mysql_select_db("$db", $conn);
 	if(!$conn||!$sel||$query)
 	{
 		print "Error: ".mysql_error();
@@ -49,26 +64,21 @@
 		}
 		if(!$flg)
 		{
-			header("Location: login.php");
+			?>
+			<script type="text/javascript">
+			$(function(){
+				$('#usernameDiv').addClass("has-error").removeClass("has-success");
+				$('#passwordDiv').addClass("has-error").removeClass("has-success");		
+			});
+			</script>
+			<?php
+			//header("Location: login.php");
 		}
 	}
-	else {
+	//else {
 	?>
 	
-	<head>
-		<title>ServerZilla Admin Login</title>
-    	<link href="img/icon.gif" rel="icon" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta charset="utf-8" />
-        
-        <script src="js/jquery-1.11.1.min.js"></script>
-        <script src="js/misc.js"></script>
-        <script src="js/jquery.confirm.min.js"></script>
-        <script src="js/bootbox.min.js"></script>
-        
-        <link rel="stylesheet" href="css/bootstrap.min.css" />
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
-        <link rel="stylesheet" href="css/misc.css" />       
+	
         
 	</head>
 	<body>	
@@ -76,7 +86,7 @@
 	</div>
     <div class="container">    	
         <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
-            <div class="panel panel-primary" >
+            <div id="shake" class="panel panel-primary" >
                     <div class="panel-heading">
                         <div class="panel-title">ServerZilla: Login</div>
                         <div style="float:right; font-size: 80%; position: relative; top:-10px;"><a style="color: red;" href="reset.php">Forgot password?</a></div>
@@ -137,7 +147,7 @@
         	</div>
     </div>
     <?php
-    }
+    //}
     ?>    
     <hr />
 	<footer id="header" style="position: fixed; bottom: 0; width: 100%;">

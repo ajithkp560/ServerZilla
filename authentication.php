@@ -8,7 +8,7 @@
 		header("Location: install.php");
 	}
 	$han = mysql_connect($dbHost, $dbUsr, $dbPass);
-	$sel = mysql_select_db("ftp_db", $han);
+	$sel = mysql_select_db("$db", $han);
 	
 	if(isset($_COOKIE['usr']) && isset($_COOKIE['pass']))
 	{

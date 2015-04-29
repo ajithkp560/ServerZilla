@@ -23,7 +23,7 @@
         @include 'config.php';
 		$admin = $_SERVER['SERVER_ADMIN'];
         $conn = mysql_connect($dbHost, $dbUsr, $dbPass);
-		$sel = mysql_select_db("ftp_db", $conn);
+		$sel = mysql_select_db("$db", $conn);
 		$query = mysql_query("SELECT * FROM ftp_user;");
 		if(isset($_POST['newpass']) && isset($_POST['email']) && isset($_POST['code'])) {
 			$flg = FALSE;
@@ -37,8 +37,11 @@
 			}
 			if($flg)
 			{
-				header("Location: login.php");
-				exit;
+				message("Success", "Password changed successfully", "login.php");
+			}
+			else
+			{
+				message("Error", "Failed to change password.", "reset.php");
 			}
 		}
 		else if(isset($_POST['code']) && isset($_POST['email']))
@@ -78,6 +81,9 @@
               		</div>  
         		</div>
 				<?php
+				}
+				else {
+					message("Error", "The code you inserted is wrong. Try again from beginning.", "reset.php");
 				}
 			}
 		}
@@ -126,8 +132,7 @@
         		<?php
 				}
 				else {
-					header("Location: reset.php");
-					exit;
+					message("Error", "Provide correct E-Mail address.", "reset.php");
 				}
 			}
 		}
@@ -155,16 +160,6 @@
                                     <button id="btn-fblogin" type="reset" class="btn btn-primary">Reset</button>
                                 </div>
                            	</div>
-                                <!--<div class="form-group">
-                                    <div class="col-md-12 control">
-                                        <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" >
-                                            Don't have an account! 
-                                        <a href="#" onClick="$('#loginbox').hide(); $('#signupbox').show()">
-                                            Sign Up Here
-                                        </a>
-                                        </div>
-                                    </div>
-                                </div>    -->
                             </form>     
                         </div>                     
                     </div>  
@@ -178,5 +173,23 @@
 	<footer id="header" style="position: fixed; bottom: 0; width: 100%;">
 		<center><label>&copy; ServerZilla &copy;</label></center>
 	</footer>
+	<script src="js/bootstrap.min.js"></script>
+	<?php
+	function message($title, $message, $loc)
+	{
+		?>
+		<script type="text/javascript">
+			$(function(){
+				bootbox.alert({
+					title: "<?php echo $title; ?>",
+					message: "<?php echo $message; ?>",
+					callback: function(){ document.location="<?php echo $loc; ?>"; }
+				});
+			});
+			//
+		</script>
+		<?php
+	}
+	?>
 	</body>
 	</html>

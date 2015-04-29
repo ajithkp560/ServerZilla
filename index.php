@@ -2,11 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>        
     	<title>ServerZilla</title>
-    	<!--
-    		Coded By Ajith Kp (fb.com/ajithkp560) and Arjun Ny (fb.com/arjun.knr.5).
-    		BCA Final Year Project 2015.
-    		(C) ServerZilla (c)
-    	-->
     	<link href="img/icon.gif" rel="icon" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charset="utf-8" />
@@ -282,6 +277,14 @@
 						<?php
 					}
 				}
+			}
+
+			if(isset($_GET['uploadd']))
+			{
+				$odir = $_GET['uploadd'];
+				$dirs = array();
+				$fils = array();
+				zip($odir);
 			}
 			
 			if(isset($_GET['oldnamef']) && isset($_GET['dorenamef']))
@@ -604,6 +607,85 @@
 				</script>
 				<?php
 			}
+			
+			function zip($dir)
+			{
+				global $sep, $conn;
+				$zip = new ZipArchive;
+				$namef = getcwd().$sep.basename($dir).".zip";
+				$zip->open($namef, ZipArchive::CREATE);
+				$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::SELF_FIRST);
+				foreach ($files as $name => $file)
+				{
+					if (substr($name,-1)==".") continue;
+					if (substr($name,-1)=="..") continue;
+					$filePath = $file->getRealPath();
+					if(filetype($filePath) == 'dir')
+					{
+						$zip->addEmptyDir($filePath, str_replace($dir . $sep, '', $filePath . $sep));
+					}
+					else {
+						$zip->addFile($filePath, str_replace($dir . $sep, '', $filePath));
+					}
+				}
+				
+				if(!$zip->close())
+				{
+					?>
+						<script type="text/javascript">
+						$(function(){
+							bootbox.alert({
+								title: "Failed",
+								message: "The directory <?php echo basename($dir); ?> failed to compress",
+							});
+						});
+						</script>
+					<?php
+				}
+				else {
+					if($conn)
+					{
+						$upload = ftp_put($conn, basename($namef), basename($namef), FTP_BINARY);
+						if($upload)
+						{
+							?>
+							<script type="text/javascript">
+							$(function(){
+								bootbox.alert({
+									title: "Success",
+									message: "The file '<?php echo basename($namef); ?>' uploaded successfully!!!.",
+								});
+							});
+							</script>
+							<?php
+						}
+						else{
+							?>
+							<script type="text/javascript">
+							$(function(){
+								bootbox.alert({
+									title: "Error",
+									message: "The file '<?php echo basename($namef); ?>' failed to upload!!!.",
+								});
+							});
+							</script>
+							<?php
+						}
+					}
+					else {
+					?>
+						<script type="text/javascript">
+						$(function(){
+							bootbox.alert({
+								title: "Error",
+								message: "Connect to FTP server to upload file!!!.",
+							});
+						});
+						</script>
+						<?php
+					}
+				}
+			}
 			?>
     </head>
     <body>
@@ -704,7 +786,7 @@
 							}
 						}
 						foreach ($dirs as $dir) {
-							echo "<tr><td>[ <a href='$self?path=$dir&fpath=$fpath'>".basename($dir)."</a> ]</td><td>".filesizes(filesize($dir))."</td><td style='width:40%;'><div id='action$id'>| <a href='$self?id=$id&path=$path&fpath=$fpath&rename=".basename($dir)."#action$id'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a> | <a id='delete$id' href='$self?id=$id&path=$path&fpath=$fpath&delete=".basename($dir)."'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a> | </div><div style='text-align='right';' id='form$id'></div></td></tr>\n";
+							echo "<tr><td>[ <a href='$self?path=$dir&fpath=$fpath'>".basename($dir)."</a> ]</td><td>".filesizes(filesize($dir))."</td><td style='width:40%;'><div id='action$id'>| <a href='$self?id=$id&path=$path&fpath=$fpath&rename=".basename($dir)."#action$id'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a> | <a id='delete$id' href='$self?id=$id&path=$path&fpath=$fpath&delete=".basename($dir)."'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a> | <a href='$self?path=$path&uploadd=$dir&fpath=$fpath'><span class='glyphicon glyphicon-open' aria-hidden='true'></span></a> | </div><div style='text-align='right';' id='form$id'></div></td></tr>\n";
 							$id = $id+1;	
 						}
 						foreach ($fils as $fil) {
@@ -809,7 +891,5 @@
 		<center><label>&copy; ServerZilla &copy;</label></center>
 	</footer>
     <script src="js/bootstrap.min.js"></script>
-    <!--<script src="js/impress.js"></script>
-	<script>impress().init();</script>-->
     </body>
 </html>
