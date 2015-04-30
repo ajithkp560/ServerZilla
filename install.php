@@ -306,13 +306,7 @@
             <?php
 			message("Error", "Passwords does not match.");
 		}
-		$handle = fopen("config.php", "w+");
-		$db = $_POST['dbName'];
-		$cont = "<?php\n\$db=\"$db\";\n\$dbUsr=\"".$_POST['dbUsr']."\";\n\$dbPass=\"".$_POST['dbPass']."\";\n\$dbHost=\"".$_POST['dbHost']."\";\n?>";
-		if(!$handle)
-		{
-			message("Error", "Permission denied to create files!!!.");
-		}
+		$db = $_POST[dbName];
 		$conn = mysql_connect($_POST['dbHost'], $_POST['dbUsr'], $_POST['dbPass']);
 		if(!$conn)
 		{
@@ -342,12 +336,30 @@
 			$e = mysql_query("INSERT INTO ftp_user values('".$_POST['usrname']."', '".md5($_POST['passwd'])."', '".$_POST['email']."', '');");
 			if($e)
 			{
-				print "<script>document.location='index.php';</script>";
+				$handle = fopen("config.php", "w+");
+				$db = $_POST['dbName'];
+				$cont = "<?php\n\$db=\"$db\";\n\$dbUsr=\"".$_POST['dbUsr']."\";\n\$dbPass=\"".$_POST['dbPass']."\";\n\$dbHost=\"".$_POST['dbHost']."\";\n?>";
+				if(!$handle)
+				{
+					message("Error", "Permission denied to create files!!!.");
+				}
 				$wri = fwrite($handle, $cont);
 				if(!$wri)
 				{
 					message("Error", "Permission denied to write files!!!.");
 				}
+				?>
+				<script type="text/javascript">
+				$(function(){
+					bootbox.alert({
+						title: "Message",
+						message: "You have configured application successfully.",
+						callback: function(){ document.location="login.php"; }
+					});
+				});
+				//
+				</script>
+				<?php
 			}
 			else {
 				?><script type="text/javascript">
